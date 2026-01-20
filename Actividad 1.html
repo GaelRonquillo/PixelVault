@@ -1,0 +1,124 @@
+!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelVault - Videojuegos</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #333; min-height: 100vh; }
+        header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 2rem; text-align: center; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        nav { background: #333; padding: 1rem; text-align: center; }
+        nav a { color: white; text-decoration: none; margin: 0 1rem; }
+        nav a:hover { color: #667eea; }
+        .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+        h2 { color: #667eea; text-align: center; margin: 2rem 0; }
+        .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+        .project { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        .project:hover { box-shadow: 0 4px 15px rgba(102,126,234,0.3); }
+        .icon { font-size: 3rem; margin-bottom: 1rem; }
+        .btn { display: inline-block; background: #667eea; color: white; padding: 0.6rem 1.2rem; text-decoration: none; border-radius: 5px; margin-top: 1rem; }
+        .btn:hover { background: #764ba2; }
+        .contact { background: white; padding: 2rem; border-radius: 8px; max-width: 500px; margin: 0 auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        input, textarea { width: 100%; padding: 0.8rem; margin: 0.5rem 0 1rem; border: 2px solid #ddd; border-radius: 5px; font-family: Arial; }
+        input:focus, textarea:focus { border-color: #667eea; outline: none; }
+        textarea { min-height: 100px; }
+        button { width: 100%; background: #667eea; color: white; padding: 1rem; border: none; border-radius: 5px; font-size: 1rem; cursor: pointer; }
+        button:hover { background: #764ba2; }
+        footer { background: #333; color: white; text-align: center; padding: 2rem; margin-top: 3rem; }
+        footer a { color: white; margin: 0 1rem; text-decoration: none; }
+        @media (max-width: 768px) { h1 { font-size: 2rem; } .projects { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🎮 PixelVault</h1>
+        <p>Tu biblioteca de videojuegos</p>
+    </header>
+
+    <nav>
+        <a href="#inicio">Inicio</a>
+        <a href="#proyectos">Proyectos</a>
+        <a href="#contacto">Contacto</a>
+    </nav>
+
+    <div class="container">
+        <section id="inicio">
+            <h2>Misión y Visión</h2>
+            <div class="projects">
+                <div class="project">
+                    <div class="icon">🎯</div>
+                    <h3>Misión</h3>
+                    <p>Ayudar a gamers a organizar su colección de videojuegos fácilmente.</p>
+                </div>
+                <div class="project">
+                    <div class="icon">🚀</div>
+                    <h3>Visión</h3>
+                    <p>Ser la mejor plataforma para gestionar bibliotecas de videojuegos.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="proyectos">
+            <h2>Nuestros Proyectos</h2>
+            <div class="projects">
+                <div class="project">
+                    <div class="icon">📚</div>
+                    <h3>Biblioteca Digital</h3>
+                    <p>Organiza todos tus juegos en un solo lugar con portadas y calificaciones.</p>
+                    <a href="#" class="btn">Ver más</a>
+                </div>
+                <div class="project">
+                    <div class="icon">👥</div>
+                    <h3>Comunidad</h3>
+                    <p>Conecta con otros jugadores y comparte tus juegos favoritos.</p>
+                    <a href="#" class="btn">Ver más</a>
+                </div>
+                <div class="project">
+                    <div class="icon">📊</div>
+                    <h3>Estadísticas</h3>
+                    <p>Registra tus horas de juego y logros completados.</p>
+                    <a href="#" class="btn">Ver más</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="contacto">
+            <h2>Contacto</h2>
+            <div class="contact">
+                <form id="form">
+                    <label>Nombre *</label>
+                    <input type="text" id="nombre" required placeholder="Tu nombre">
+                    
+                    <label>Email *</label>
+                    <input type="email" id="email" required placeholder="tu@email.com">
+                    
+                    <label>Mensaje *</label>
+                    <textarea id="mensaje" required placeholder="Tu mensaje..."></textarea>
+                    
+                    <button type="submit">Enviar</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div>
+            <a href="#">📘 Facebook</a>
+            <a href="#">🐦 Twitter</a>
+            <a href="#">📸 Instagram</a>
+            <a href="#">💬 Discord</a>
+        </div>
+        <p>© 2026 PixelVault</p>
+    </footer>
+
+    <script>
+        document.getElementById('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('¡Mensaje enviado! 😊');
+            this.reset();
+        });
+    </script>
+</body>
+</html>
