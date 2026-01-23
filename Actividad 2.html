@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelVault - Videojuegos</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #333; min-height: 100vh; }
+        header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 2rem; text-align: center; }
+        
+        /* Logo animado */
+        .logo-container {
+            margin-bottom: 1rem;
+        }
+        
+        .logo-img {
+            width: 150px;
+            height: auto;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.3));
+        }
+        
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0) scale(1); 
+            }
+            50% { 
+                transform: translateY(-15px) scale(1.05); 
+            }
+        }
+        
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        nav { background: #333; padding: 1rem; text-align: center; position: sticky; top: 0; z-index: 100; }
+        nav a { color: white; text-decoration: none; margin: 0 1rem; padding: 0.5rem; border-radius: 5px; display: inline-block; }
+        nav a:hover { color: #667eea; background: rgba(102, 126, 234, 0.1); }
+        .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+        h2 { color: #667eea; text-align: center; margin: 2rem 0; }
+        
+        /* Color especial para títulos de Misión/Visión y Proyectos */
+        #inicio h2, #proyectos h2 {
+            color: #ffffff;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            font-weight: bold;
+        }
+        
+        h3 { color: #667eea; margin-bottom: 1rem; }
+        
+        /* EFECTOS PARA LAS TARJETAS */
+        .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+        .project { 
+            background: white; 
+            padding: 1.5rem; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Efecto de brillo al pasar el mouse */
+        .project::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+        
+        .project:hover::before {
+            animation: shine 1s ease;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        .project:hover { 
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(102,126,234,0.4);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+        }
+        
+        /* Efecto en los iconos */
+        .icon { 
+            font-size: 3rem; 
+            margin-bottom: 1rem;
+            transition: all 0.4s ease;
+            display: inline-block;
+        }
+        
+        .project:hover .icon {
+            transform: rotate(360deg) scale(1.3);
+            filter: drop-shadow(0 5px 15px rgba(102, 126, 234, 0.5));
+        }
+        
+        /* Efecto en el título h3 */
+        .project h3 {
+            transition: all 0.3s ease;
+        }
+        
+        .project:hover h3 {
+            color: #764ba2;
+            transform: scale(1.1);
+        }
+        
+        /* Efecto en el párrafo */
+        .project p {
+            transition: all 0.3s ease;
+        }
+        
+        .project:hover p {
+            color: #667eea;
+        }
+        
+        .btn { 
+            display: inline-block; 
+            background: #667eea; 
+            color: white; 
+            padding: 0.6rem 1.2rem; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            margin-top: 1rem; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn:hover { 
+            background: #764ba2;
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(118, 75, 162, 0.5);
+        }
+        
+        .contact { background: white; padding: 2rem; border-radius: 8px; max-width: 500px; margin: 0 auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        /* Estilos para el Gestor de Tareas */
+        .task-section { background: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .task-form { display: flex; flex-direction: column; gap: 1rem; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 0.3rem; font-weight: bold; color: #333; }
+        .error-message { color: #e74c3c; font-size: 0.85rem; margin-top: 0.3rem; min-height: 20px; }
+        
+        /* Filtros */
+        .filters { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center; }
+        .filter-btn { padding: 0.6rem 1.5rem; border: 2px solid #667eea; background: white; color: #667eea; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .filter-btn:hover, .filter-btn.active { background: #667eea; color: white; }
+        
+        /* Estadísticas */
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        .stat-card:hover { box-shadow: 0 4px 15px rgba(102,126,234,0.3); }
+        .stat-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .stat-number { font-size: 2rem; font-weight: bold; color: #667eea; }
+        .stat-label { color: #666; font-size: 0.9rem; }
+        
+        /* Lista de tareas */
+        .task-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+        .task-item { background: #f5f5f5; padding: 1.5rem; border-radius: 8px; display: flex; align-items: center; gap: 1rem; border-left: 4px solid #667eea; }
+        .task-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .task-item.completed { opacity: 0.6; border-left-color: #10b981; }
+        .task-checkbox { width: 20px; height: 20px; cursor: pointer; }
+        .task-content { flex: 1; }
+        .task-name { font-size: 1.1rem; font-weight: bold; color: #333; margin-bottom: 0.3rem; }
+        .task-item.completed .task-name { text-decoration: line-through; color: #999; }
+        .task-desc { font-size: 0.9rem; color: #666; margin-top: 0.3rem; }
+        .task-date { font-size: 0.8rem; color: #999; margin-top: 0.3rem; }
+        .task-actions { display: flex; gap: 0.5rem; }
+        .btn-edit, .btn-delete { padding: 0.5rem 1rem; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-edit { background: #3b82f6; color: white; }
+        .btn-edit:hover { background: #2563eb; }
+        .btn-delete { background: #ef4444; color: white; }
+        .btn-delete:hover { background: #dc2626; }
+        
+        /* Estado vacío */
+        .empty-state { text-align: center; padding: 3rem; }
+        .empty-icon { font-size: 5rem; margin-bottom: 1rem; }
+        .empty-state p { color: #666; }
+        .hidden { display: none !important; }
+        
+        /* Modal */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: white; padding: 2rem; border-radius: 10px; max-width: 500px; width: 90%; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .close-modal { position: absolute; top: 1rem; right: 1rem; font-size: 2rem; cursor: pointer; color: #666; }
+        .close-modal:hover { color: #ef4444; }
+        .modal-buttons { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .btn-save, .btn-cancel { flex: 1; padding: 0.8rem; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .btn-save { background: #10b981; color: white; }
+        .btn-save:hover { background: #059669; }
+        .btn-cancel { background: #6b7280; color: white; }
+        .btn-cancel:hover { background: #ef4444; }
+        
+        input, textarea { width: 100%; padding: 0.8rem; margin: 0.5rem 0 1rem; border: 2px solid #ddd; border-radius: 5px; font-family: Arial; }
+        input:focus, textarea:focus { border-color: #667eea; outline: none; }
+        textarea { min-height: 100px; resize: vertical; }
+        button { width: 100%; background: #667eea; color: white; padding: 1rem; border: none; border-radius: 5px; font-size: 1rem; cursor: pointer; font-weight: bold; }
+        button:hover { background: #764ba2; }
+        footer { background: #333; color: white; text-align: center; padding: 2rem; margin-top: 3rem; }
+        footer a { color: white; margin: 0 1rem; text-decoration: none; }
+        
+        @media (max-width: 768px) { 
+            h1 { font-size: 2rem; } 
+            .projects { grid-template-columns: 1fr; }
+            .task-item { flex-direction: column; align-items: flex-start; }
+            .task-actions { width: 100%; justify-content: flex-end; }
+            .filters { flex-direction: column; }
+            .filter-btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <!-- Reemplaza esta URL con tu logo cuando lo tengas guardado -->
+            <svg class="logo-img" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <!-- Cofre (Treasury Chest) -->
+                <rect x="180" y="200" width="152" height="120" fill="#4169E1"/>
+                <rect x="170" y="190" width="172" height="140" fill="#5B7FE8"/>
+                
+                <!-- Detalles del cofre -->
+                <rect x="180" y="220" width="152" height="30" fill="#6B8EF2"/>
+                <rect x="190" y="240" width="132" height="20" fill="#4169E1"/>
+                
+                <!-- Cerradura central -->
+                <circle cx="256" cy="260" r="15" fill="#2ECC71"/>
+                <rect x="251" y="260" width="10" height="15" fill="#1F5F3F"/>
+                
+                <!-- Conexiones de circuito -->
+                <g stroke="#4FC3F7" stroke-width="4" fill="none">
+                    <line x1="140" y1="240" x2="180" y2="240"/>
+                    <circle cx="120" cy="240" r="8" fill="#4FC3F7"/>
+                    
+                    <line x1="140" y1="270" x2="180" y2="270"/>
+                    <circle cx="120" cy="270" r="8" fill="#4FC3F7"/>
+                    
+                    <line x1="332" y1="240" x2="372" y2="240"/>
+                    <circle cx="392" cy="240" r="8" fill="#4FC3F7"/>
+                    
+                    <line x1="332" y1="270" x2="372" y2="270"/>
+                    <circle cx="392" cy="270" r="8" fill="#4FC3F7"/>
+                </g>
+                
+                <!-- Tapa superior -->
+                <rect x="180" y="180" width="152" height="30" fill="#7B9EF8"/>
+                <rect x="190" y="185" width="132" height="20" fill="#6B8EF2"/>
+            </svg>
+        </div>
+        <h1>PixelVault</h1>
+        <p>Tu biblioteca de videojuegos</p>
+    </header>
+
+    <nav>
+        <a href="#inicio">Inicio</a>
+        <a href="#proyectos">Proyectos</a>
+        <a href="#tareas">Reseñas</a>
+        <a href="#contacto">Contacto</a>
+    </nav>
+
+    <div class="container">
+        <section id="inicio">
+            <h2>Misión y Visión</h2>
+            <div class="projects">
+                <div class="project">
+                    <div class="icon">🎯</div>
+                    <h3>Misión</h3>
+                    <p>Ayudar a gamers a organizar su colección de videojuegos fácilmente.</p>
+                </div>
+                <div class="project">
+                    <div class="icon">🚀</div>
+                    <h3>Visión</h3>
+                    <p>Ser la mejor plataforma para gestionar bibliotecas de videojuegos.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="proyectos">
+            <h2>Nuestros Proyectos</h2>
+            <div class="projects">
+                <div class="project">
+                    <div class="icon">📚</div>
+                    <h3>Biblioteca Digital</h3>
+                    <p>Organiza todos tus juegos en un solo lugar con portadas y calificaciones.</p>
+                    <a href="#" class="btn">Ver más</a>
+                </div>
+                <div class="project">
+                    <div class="icon">👥</div>
+                    <h3>Comunidad</h3>
+                    <p>Conecta con otros jugadores y comparte tus juegos favoritos.</p>
+                    <a href="#" class="btn">Ver más</a>
+                </div>
+                <div class="project">
+                    <div class="icon">📊</div>
+                    <h3>Estadísticas</h3>
+                    <p>Registra tus horas de juego y logros completados.</p>
+                    <a href="#" class="btn">Ver más</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- NUEVA SECCIÓN: RESEÑAS -->
+        <section id="tareas">
+            <h2>⭐ Reseñas de Videojuegos</h2>
+            
+            <!-- Agregar tarea -->
+            <div class="task-section">
+                <h3>✍️ Escribir Nueva Reseña</h3>
+                <form id="taskForm" class="task-form">
+                    <div class="form-group">
+                        <label for="taskInput">Nombre del Juego *</label>
+                        <input type="text" id="taskInput" placeholder="Ej: The Witcher 3: Wild Hunt" required>
+                        <span class="error-message" id="taskError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDescription">Tu Reseña (opcional)</label>
+                        <textarea id="taskDescription" placeholder="Escribe tu opinión sobre el juego..." rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn">📝 Publicar Reseña</button>
+                </form>
+            </div>
+
+            <!-- Filtros -->
+            <div class="task-section">
+                <h3>Filtrar Reseñas:</h3>
+                <div class="filters">
+                    <button class="filter-btn active" data-filter="todas">Todas</button>
+                    <button class="filter-btn" data-filter="activas">En Progreso</button>
+                    <button class="filter-btn" data-filter="completadas">Completadas</button>
+                </div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-icon">🎮</div>
+                    <div class="stat-number" id="totalTasks">0</div>
+                    <div class="stat-label">Total Reseñas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-number" id="completedTasks">0</div>
+                    <div class="stat-label">Completadas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-number" id="pendingTasks">0</div>
+                    <div class="stat-label">En Progreso</div>
+                </div>
+            </div>
+
+            <!-- Lista de tareas -->
+            <div class="task-section">
+                <h3>📖 Mis Reseñas Publicadas</h3>
+                <ul id="taskList" class="task-list"></ul>
+                <div id="emptyState" class="empty-state">
+                    <div class="empty-icon">📝</div>
+                    <h3>No hay reseñas</h3>
+                    <p>¡Escribe tu primera reseña usando el formulario de arriba!</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contacto">
+            <h2>Contacto</h2>
+            <div class="contact">
+                <form id="contactForm">
+                    <label>Nombre *</label>
+                    <input type="text" id="nombre" required placeholder="Tu nombre">
+                    
+                    <label>Email *</label>
+                    <input type="email" id="email" required placeholder="tu@email.com">
+                    
+                    <label>Mensaje *</label>
+                    <textarea id="mensaje" required placeholder="Tu mensaje..."></textarea>
+                    
+                    <button type="submit">Enviar</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal de edición -->
+    <div id="editModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>✏️ Editar Reseña</h2>
+            <form id="editForm">
+                <div class="form-group">
+                    <label for="editTaskInput">Nombre del Juego *</label>
+                    <input type="text" id="editTaskInput" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTaskDescription">Tu Reseña</label>
+                    <textarea id="editTaskDescription" rows="3"></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-save">💾 Guardar</button>
+                    <button type="button" class="btn-cancel">❌ Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div>
+            <a href="#">📘 Facebook</a>
+            <a href="#">🐦 Twitter</a>
+            <a href="#">📸 Instagram</a>
+            <a href="#">💬 Discord</a>
+        </div>
+        <p>© 2026 PixelVault</p>
+    </footer>
+
+    <script>
+        // [EL MISMO CÓDIGO JAVASCRIPT DEL GESTOR DE TAREAS]
+        class Tarea {
+            constructor(nombre, descripcion = '') {
+                this.id = Date.now();
+                this.nombre = nombre;
+                this.descripcion = descripcion;
+                this.completada = false;
+                this.fechaCreacion = new Date().toLocaleString('es-MX');
+            }
+            toggleCompletada() { this.completada = !this.completada; }
+            editar(nuevoNombre, nuevaDescripcion) {
+                this.nombre = nuevoNombre;
+                this.descripcion = nuevaDescripcion;
+            }
+        }
+
+        class GestorDeTareas {
+            constructor() {
+                this.tareas = this.cargarTareasDesdeLocalStorage();
+                this.filtroActual = 'todas';
+            }
+            agregarTarea(nombre, descripcion) {
+                const nuevaTarea = new Tarea(nombre, descripcion);
+                this.tareas.push(nuevaTarea);
+                this.guardarEnLocalStorage();
+                return nuevaTarea;
+            }
+            eliminarTarea(id) {
+                this.tareas = this.tareas.filter(tarea => tarea.id !== id);
+                this.guardarEnLocalStorage();
+            }
+            editarTarea(id, nuevoNombre, nuevaDescripcion) {
+                const tarea = this.tareas.find(t => t.id === id);
+                if (tarea) {
+                    tarea.editar(nuevoNombre, nuevaDescripcion);
+                    this.guardarEnLocalStorage();
+                }
+            }
+            toggleCompletada(id) {
+                const tarea = this.tareas.find(t => t.id === id);
+                if (tarea) {
+                    tarea.toggleCompletada();
+                    this.guardarEnLocalStorage();
+                }
+            }
+            obtenerTareasFiltradas() {
+                switch (this.filtroActual) {
+                    case 'activas': return this.tareas.filter(t => !t.completada);
+                    case 'completadas': return this.tareas.filter(t => t.completada);
+                    default: return this.tareas;
+                }
+            }
+            obtenerEstadisticas() {
+                return {
+                    total: this.tareas.length,
+                    completadas: this.tareas.filter(t => t.completada).length,
+                    pendientes: this.tareas.filter(t => !t.completada).length
+                };
+            }
+            guardarEnLocalStorage() {
+                localStorage.setItem('pixelvault_tareas', JSON.stringify(this.tareas));
+            }
+            cargarTareasDesdeLocalStorage() {
+                const tareasGuardadas = localStorage.getItem('pixelvault_tareas');
+                if (tareasGuardadas) {
+                    const tareasParseadas = JSON.parse(tareasGuardadas);
+                    return tareasParseadas.map(t => {
+                        const tarea = new Tarea(t.nombre, t.descripcion);
+                        tarea.id = t.id;
+                        tarea.completada = t.completada;
+                        tarea.fechaCreacion = t.fechaCreacion;
+                        return tarea;
+                    });
+                }
+                return [];
+            }
+            setFiltro(filtro) { this.filtroActual = filtro; }
+        }
+
+        const gestor = new GestorDeTareas();
+        const taskForm = document.getElementById('taskForm');
+        const taskInput = document.getElementById('taskInput');
+        const taskDescription = document.getElementById('taskDescription');
+        const taskError = document.getElementById('taskError');
+        const taskList = document.getElementById('taskList');
+        const emptyState = document.getElementById('emptyState');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const editModal = document.getElementById('editModal');
+        const editForm = document.getElementById('editForm');
+        const editTaskInput = document.getElementById('editTaskInput');
+        const editTaskDescription = document.getElementById('editTaskDescription');
+        const closeModalBtn = document.querySelector('.close-modal');
+        const cancelBtn = document.querySelector('.btn-cancel');
+        let tareaEnEdicion = null;
+
+        taskForm.addEventListener('submit', (e) => { e.preventDefault(); agregarTarea(); });
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                gestor.setFiltro(btn.dataset.filter);
+                renderizarTareas();
+            });
+        });
+        closeModalBtn.addEventListener('click', cerrarModal);
+        cancelBtn.addEventListener('click', cerrarModal);
+        editModal.addEventListener('click', (e) => { if (e.target === editModal) cerrarModal(); });
+        editForm.addEventListener('submit', (e) => { e.preventDefault(); guardarEdicion(); });
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('¡Mensaje enviado! 😊');
+            this.reset();
+        });
+
+        function agregarTarea() {
+            taskError.textContent = '';
+            const nombre = taskInput.value.trim();
+            const descripcion = taskDescription.value.trim();
+            if (nombre === '') {
+                taskError.textContent = '❌ El nombre no puede estar vacío';
+                taskInput.focus();
+                return;
+            }
+            if (nombre.length < 3) {
+                taskError.textContent = '❌ Mínimo 3 caracteres';
+                taskInput.focus();
+                return;
+            }
+            gestor.agregarTarea(nombre, descripcion);
+            taskForm.reset();
+            mostrarNotificacion('✅ Tarea agregada');
+            renderizarTareas();
+            actualizarEstadisticas();
+        }
+
+        function renderizarTareas() {
+            taskList.innerHTML = '';
+            const tareasFiltradas = gestor.obtenerTareasFiltradas();
+            if (gestor.tareas.length === 0) {
+                emptyState.classList.remove('hidden');
+                taskList.classList.add('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+                taskList.classList.remove('hidden');
+            }
+            if (tareasFiltradas.length === 0) {
+                taskList.innerHTML = `<li class="empty-state"><div class="empty-icon">🔍</div><h3>No se encontraron tareas</h3><p>Intenta con otro filtro</p></li>`;
+                return;
+            }
+            tareasFiltradas.forEach(tarea => {
+                const li = document.createElement('li');
+                li.className = `task-item ${tarea.completada ? 'completed' : ''}`;
+                li.innerHTML = `
+                    <input type="checkbox" class="task-checkbox" ${tarea.completada ? 'checked' : ''}>
+                    <div class="task-content">
+                        <div class="task-name">${tarea.nombre}</div>
+                        ${tarea.descripcion ? `<div class="task-desc">${tarea.descripcion}</div>` : ''}
+                        <div class="task-date">📅 ${tarea.fechaCreacion}</div>
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn-edit">✏️ Editar</button>
+                        <button class="btn-delete">🗑️ Eliminar</button>
+                    </div>
+                `;
+                const checkbox = li.querySelector('.task-checkbox');
+                const btnEdit = li.querySelector('.btn-edit');
+                const btnDelete = li.querySelector('.btn-delete');
+                checkbox.addEventListener('change', () => {
+                    gestor.toggleCompletada(tarea.id);
+                    renderizarTareas();
+                    actualizarEstadisticas();
+                });
+                btnEdit.addEventListener('click', () => {
+                    tareaEnEdicion = tarea;
+                    editTaskInput.value = tarea.nombre;
+                    editTaskDescription.value = tarea.descripcion;
+                    editModal.classList.remove('hidden');
+                });
+                btnDelete.addEventListener('click', () => {
+                    if (confirm('¿Eliminar esta tarea?')) {
+                        gestor.eliminarTarea(tarea.id);
+                        mostrarNotificacion('🗑️ Tarea eliminada');
+                        renderizarTareas();
+                        actualizarEstadisticas();
+                    }
+                });
+                taskList.appendChild(li);
+            });
+        }
+
+        function cerrarModal() {
+            editModal.classList.add('hidden');
+            tareaEnEdicion = null;
+            editForm.reset();
+        }
+
+        function guardarEdicion() {
+            if (!tareaEnEdicion) return;
+            const nuevoNombre = editTaskInput.value.trim();
+            const nuevaDescripcion = editTaskDescription.value.trim();
+            if (nuevoNombre === '' || nuevoNombre.length < 3) {
+                alert('❌ El nombre debe tener al menos 3 caracteres');
+                return;
+            }
+            gestor.editarTarea(tareaEnEdicion.id, nuevoNombre, nuevaDescripcion);
+            cerrarModal();
+            mostrarNotificacion('✅ Tarea actualizada');
+            renderizarTareas();
+        }
+
+        function actualizarEstadisticas() {
+            const stats = gestor.obtenerEstadisticas();
+            document.getElementById('totalTasks').textContent = stats.total;
+            document.getElementById('completedTasks').textContent = stats.completadas;
+            document.getElementById('pendingTasks').textContent = stats.pendientes;
+        }
+
+        function mostrarNotificacion(mensaje) {
+            const notif = document.createElement('div');
+            notif.style.cssText = `position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 1rem 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 2000;`;
+            notif.textContent = mensaje;
+            document.body.appendChild(notif);
+            setTimeout(() => document.body.removeChild(notif), 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarTareas();
+            actualizarEstadisticas();
+        });
+    </script>
+</body>
+</html>
