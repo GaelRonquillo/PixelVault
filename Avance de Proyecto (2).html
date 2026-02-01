@@ -220,21 +220,11 @@
         .btn-cancel { background: #6b7280; color: white; }
         .btn-cancel:hover { background: #ef4444; }
         
-        /* Loading spinner */
-        .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        /* Badge de conexión */
-        .connection-badge { position: fixed; top: 80px; right: 20px; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: bold; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-        .connection-badge.connected { background: #10b981; color: white; }
-        .connection-badge.disconnected { background: #ef4444; color: white; }
-        
         input, textarea { width: 100%; padding: 0.8rem; margin: 0.5rem 0 1rem; border: 2px solid #ddd; border-radius: 5px; font-family: Arial; }
         input:focus, textarea:focus { border-color: #667eea; outline: none; }
         textarea { min-height: 100px; resize: vertical; }
         button { width: 100%; background: #667eea; color: white; padding: 1rem; border: none; border-radius: 5px; font-size: 1rem; cursor: pointer; font-weight: bold; }
         button:hover { background: #764ba2; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
         footer { background: #333; color: white; text-align: center; padding: 2rem; margin-top: 3rem; }
         footer a { color: white; margin: 0 1rem; text-decoration: none; }
         
@@ -249,34 +239,44 @@
     </style>
 </head>
 <body>
-    <!-- Badge de conexión -->
-    <div id="connectionBadge" class="connection-badge connected">🟢 Conectado al servidor</div>
-
     <header>
         <div class="logo-container">
+            <!-- Reemplaza esta URL con tu logo cuando lo tengas guardado -->
             <svg class="logo-img" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <!-- Cofre (Treasury Chest) -->
                 <rect x="180" y="200" width="152" height="120" fill="#4169E1"/>
                 <rect x="170" y="190" width="172" height="140" fill="#5B7FE8"/>
+                
+                <!-- Detalles del cofre -->
                 <rect x="180" y="220" width="152" height="30" fill="#6B8EF2"/>
                 <rect x="190" y="240" width="132" height="20" fill="#4169E1"/>
+                
+                <!-- Cerradura central -->
                 <circle cx="256" cy="260" r="15" fill="#2ECC71"/>
                 <rect x="251" y="260" width="10" height="15" fill="#1F5F3F"/>
+                
+                <!-- Conexiones de circuito -->
                 <g stroke="#4FC3F7" stroke-width="4" fill="none">
                     <line x1="140" y1="240" x2="180" y2="240"/>
                     <circle cx="120" cy="240" r="8" fill="#4FC3F7"/>
+                    
                     <line x1="140" y1="270" x2="180" y2="270"/>
                     <circle cx="120" cy="270" r="8" fill="#4FC3F7"/>
+                    
                     <line x1="332" y1="240" x2="372" y2="240"/>
                     <circle cx="392" cy="240" r="8" fill="#4FC3F7"/>
+                    
                     <line x1="332" y1="270" x2="372" y2="270"/>
                     <circle cx="392" cy="270" r="8" fill="#4FC3F7"/>
                 </g>
+                
+                <!-- Tapa superior -->
                 <rect x="180" y="180" width="152" height="30" fill="#7B9EF8"/>
                 <rect x="190" y="185" width="132" height="20" fill="#6B8EF2"/>
             </svg>
         </div>
         <h1>PixelVault</h1>
-        <p>Tu biblioteca de videojuegos - ¡Ahora con backend Node.js! 🚀</p>
+        <p>Tu biblioteca de videojuegos</p>
     </header>
 
     <nav>
@@ -344,7 +344,7 @@
                         <label for="taskDescription">Tu Reseña (opcional)</label>
                         <textarea id="taskDescription" placeholder="Escribe tu opinión sobre el juego..." rows="3"></textarea>
                     </div>
-                    <button type="submit" class="btn" id="submitBtn">📝 Publicar Reseña</button>
+                    <button type="submit" class="btn">📝 Publicar Reseña</button>
                 </form>
             </div>
 
@@ -437,18 +437,90 @@
             <a href="#">📸 Instagram</a>
             <a href="#">💬 Discord</a>
         </div>
-        <p>© 2026 PixelVault - Powered by Node.js + Express + SQLite</p>
+        <p>© 2026 PixelVault</p>
     </footer>
 
     <script>
-        // Configuración de la API
-        const API_URL = 'http://localhost:3000/api';
-        
-        // Estado global
-        let filtroActual = 'todas';
-        let tareaEnEdicion = null;
 
-        // Elementos del DOM
+        class Tarea {
+            constructor(nombre, descripcion = '') {
+                this.id = Date.now();
+                this.nombre = nombre;
+                this.descripcion = descripcion;
+                this.completada = false;
+                this.fechaCreacion = new Date().toLocaleString('es-MX');
+            }
+            toggleCompletada() { this.completada = !this.completada; }
+            editar(nuevoNombre, nuevaDescripcion) {
+                this.nombre = nuevoNombre;
+                this.descripcion = nuevaDescripcion;
+            }
+        }
+
+        class GestorDeTareas {
+            constructor() {
+                this.tareas = this.cargarTareasDesdeLocalStorage();
+                this.filtroActual = 'todas';
+            }
+            agregarTarea(nombre, descripcion) {
+                const nuevaTarea = new Tarea(nombre, descripcion);
+                this.tareas.push(nuevaTarea);
+                this.guardarEnLocalStorage();
+                return nuevaTarea;
+            }
+            eliminarTarea(id) {
+                this.tareas = this.tareas.filter(tarea => tarea.id !== id);
+                this.guardarEnLocalStorage();
+            }
+            editarTarea(id, nuevoNombre, nuevaDescripcion) {
+                const tarea = this.tareas.find(t => t.id === id);
+                if (tarea) {
+                    tarea.editar(nuevoNombre, nuevaDescripcion);
+                    this.guardarEnLocalStorage();
+                }
+            }
+            toggleCompletada(id) {
+                const tarea = this.tareas.find(t => t.id === id);
+                if (tarea) {
+                    tarea.toggleCompletada();
+                    this.guardarEnLocalStorage();
+                }
+            }
+            obtenerTareasFiltradas() {
+                switch (this.filtroActual) {
+                    case 'activas': return this.tareas.filter(t => !t.completada);
+                    case 'completadas': return this.tareas.filter(t => t.completada);
+                    default: return this.tareas;
+                }
+            }
+            obtenerEstadisticas() {
+                return {
+                    total: this.tareas.length,
+                    completadas: this.tareas.filter(t => t.completada).length,
+                    pendientes: this.tareas.filter(t => !t.completada).length
+                };
+            }
+            guardarEnLocalStorage() {
+                localStorage.setItem('pixelvault_tareas', JSON.stringify(this.tareas));
+            }
+            cargarTareasDesdeLocalStorage() {
+                const tareasGuardadas = localStorage.getItem('pixelvault_tareas');
+                if (tareasGuardadas) {
+                    const tareasParseadas = JSON.parse(tareasGuardadas);
+                    return tareasParseadas.map(t => {
+                        const tarea = new Tarea(t.nombre, t.descripcion);
+                        tarea.id = t.id;
+                        tarea.completada = t.completada;
+                        tarea.fechaCreacion = t.fechaCreacion;
+                        return tarea;
+                    });
+                }
+                return [];
+            }
+            setFiltro(filtro) { this.filtroActual = filtro; }
+        }
+
+        const gestor = new GestorDeTareas();
         const taskForm = document.getElementById('taskForm');
         const taskInput = document.getElementById('taskInput');
         const taskDescription = document.getElementById('taskDescription');
@@ -462,17 +534,15 @@
         const editTaskDescription = document.getElementById('editTaskDescription');
         const closeModalBtn = document.querySelector('.close-modal');
         const cancelBtn = document.querySelector('.btn-cancel');
-        const submitBtn = document.getElementById('submitBtn');
-        const connectionBadge = document.getElementById('connectionBadge');
+        let tareaEnEdicion = null;
 
-        // Event Listeners
         taskForm.addEventListener('submit', (e) => { e.preventDefault(); agregarTarea(); });
         filterButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 filterButtons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                filtroActual = btn.dataset.filter;
-                cargarTareas();
+                gestor.setFiltro(btn.dataset.filter);
+                renderizarTareas();
             });
         });
         closeModalBtn.addEventListener('click', cerrarModal);
@@ -485,100 +555,31 @@
             this.reset();
         });
 
-        // Funciones de la API
-        async function testConnection() {
-            try {
-                const response = await fetch(`${API_URL}/test`);
-                if (response.ok) {
-                    connectionBadge.className = 'connection-badge connected';
-                    connectionBadge.textContent = '🟢 Conectado al servidor';
-                    return true;
-                }
-            } catch (error) {
-                connectionBadge.className = 'connection-badge disconnected';
-                connectionBadge.textContent = '🔴 Servidor desconectado';
-                return false;
-            }
-        }
-
-        async function cargarTareas() {
-            try {
-                const response = await fetch(`${API_URL}/reviews`);
-                const result = await response.json();
-                
-                if (result.success) {
-                    renderizarTareas(result.data);
-                    await actualizarEstadisticas();
-                }
-            } catch (error) {
-                console.error('Error al cargar tareas:', error);
-                mostrarNotificacion('❌ Error al cargar las reseñas', 'error');
-            }
-        }
-
-        async function agregarTarea() {
+        function agregarTarea() {
             taskError.textContent = '';
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="loading"></span> Guardando...';
-            
             const nombre = taskInput.value.trim();
             const descripcion = taskDescription.value.trim();
-            
             if (nombre === '') {
                 taskError.textContent = '❌ El nombre no puede estar vacío';
                 taskInput.focus();
-                submitBtn.disabled = false;
-                submitBtn.textContent = '📝 Publicar Reseña';
                 return;
             }
-            
             if (nombre.length < 3) {
                 taskError.textContent = '❌ Mínimo 3 caracteres';
                 taskInput.focus();
-                submitBtn.disabled = false;
-                submitBtn.textContent = '📝 Publicar Reseña';
                 return;
             }
-
-            try {
-                const response = await fetch(`${API_URL}/reviews`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ nombre, descripcion })
-                });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    taskForm.reset();
-                    mostrarNotificacion('✅ Reseña publicada correctamente');
-                    await cargarTareas();
-                } else {
-                    taskError.textContent = `❌ ${result.error}`;
-                }
-            } catch (error) {
-                console.error('Error al agregar tarea:', error);
-                mostrarNotificacion('❌ Error al guardar la reseña', 'error');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = '📝 Publicar Reseña';
-            }
+            gestor.agregarTarea(nombre, descripcion);
+            taskForm.reset();
+            mostrarNotificacion('✅ Tarea agregada');
+            renderizarTareas();
+            actualizarEstadisticas();
         }
 
-        function renderizarTareas(tareas) {
+        function renderizarTareas() {
             taskList.innerHTML = '';
-            
-            // Filtrar tareas
-            let tareasFiltradas = tareas;
-            if (filtroActual === 'activas') {
-                tareasFiltradas = tareas.filter(t => t.completada === 0);
-            } else if (filtroActual === 'completadas') {
-                tareasFiltradas = tareas.filter(t => t.completada === 1);
-            }
-            
-            if (tareas.length === 0) {
+            const tareasFiltradas = gestor.obtenerTareasFiltradas();
+            if (gestor.tareas.length === 0) {
                 emptyState.classList.remove('hidden');
                 taskList.classList.add('hidden');
                 return;
@@ -586,17 +587,10 @@
                 emptyState.classList.add('hidden');
                 taskList.classList.remove('hidden');
             }
-            
             if (tareasFiltradas.length === 0) {
-                taskList.innerHTML = `
-                    <li class="empty-state">
-                        <div class="empty-icon">🔍</div>
-                        <h3>No se encontraron tareas</h3>
-                        <p>Intenta con otro filtro</p>
-                    </li>`;
+                taskList.innerHTML = `<li class="empty-state"><div class="empty-icon">🔍</div><h3>No se encontraron tareas</h3><p>Intenta con otro filtro</p></li>`;
                 return;
             }
-            
             tareasFiltradas.forEach(tarea => {
                 const li = document.createElement('li');
                 li.className = `task-item ${tarea.completada ? 'completed' : ''}`;
@@ -605,72 +599,37 @@
                     <div class="task-content">
                         <div class="task-name">${tarea.nombre}</div>
                         ${tarea.descripcion ? `<div class="task-desc">${tarea.descripcion}</div>` : ''}
-                        <div class="task-date">📅 ${tarea.fecha_creacion}</div>
+                        <div class="task-date">📅 ${tarea.fechaCreacion}</div>
                     </div>
                     <div class="task-actions">
                         <button class="btn-edit">✏️ Editar</button>
                         <button class="btn-delete">🗑️ Eliminar</button>
                     </div>
                 `;
-                
                 const checkbox = li.querySelector('.task-checkbox');
                 const btnEdit = li.querySelector('.btn-edit');
                 const btnDelete = li.querySelector('.btn-delete');
-                
-                checkbox.addEventListener('change', () => toggleCompletada(tarea.id, !tarea.completada));
-                btnEdit.addEventListener('click', () => abrirModalEdicion(tarea));
-                btnDelete.addEventListener('click', () => eliminarTarea(tarea.id));
-                
+                checkbox.addEventListener('change', () => {
+                    gestor.toggleCompletada(tarea.id);
+                    renderizarTareas();
+                    actualizarEstadisticas();
+                });
+                btnEdit.addEventListener('click', () => {
+                    tareaEnEdicion = tarea;
+                    editTaskInput.value = tarea.nombre;
+                    editTaskDescription.value = tarea.descripcion;
+                    editModal.classList.remove('hidden');
+                });
+                btnDelete.addEventListener('click', () => {
+                    if (confirm('¿Eliminar esta tarea?')) {
+                        gestor.eliminarTarea(tarea.id);
+                        mostrarNotificacion('🗑️ Tarea eliminada');
+                        renderizarTareas();
+                        actualizarEstadisticas();
+                    }
+                });
                 taskList.appendChild(li);
             });
-        }
-
-        async function toggleCompletada(id, completada) {
-            try {
-                const response = await fetch(`${API_URL}/reviews/${id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ completada })
-                });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    await cargarTareas();
-                }
-            } catch (error) {
-                console.error('Error al actualizar tarea:', error);
-                mostrarNotificacion('❌ Error al actualizar', 'error');
-            }
-        }
-
-        async function eliminarTarea(id) {
-            if (!confirm('¿Eliminar esta reseña?')) return;
-            
-            try {
-                const response = await fetch(`${API_URL}/reviews/${id}`, {
-                    method: 'DELETE'
-                });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    mostrarNotificacion('🗑️ Reseña eliminada');
-                    await cargarTareas();
-                }
-            } catch (error) {
-                console.error('Error al eliminar tarea:', error);
-                mostrarNotificacion('❌ Error al eliminar', 'error');
-            }
-        }
-
-        function abrirModalEdicion(tarea) {
-            tareaEnEdicion = tarea;
-            editTaskInput.value = tarea.nombre;
-            editTaskDescription.value = tarea.descripcion || '';
-            editModal.classList.remove('hidden');
         }
 
         function cerrarModal() {
@@ -679,88 +638,38 @@
             editForm.reset();
         }
 
-        async function guardarEdicion() {
+        function guardarEdicion() {
             if (!tareaEnEdicion) return;
-            
             const nuevoNombre = editTaskInput.value.trim();
             const nuevaDescripcion = editTaskDescription.value.trim();
-            
             if (nuevoNombre === '' || nuevoNombre.length < 3) {
                 alert('❌ El nombre debe tener al menos 3 caracteres');
                 return;
             }
-
-            try {
-                const response = await fetch(`${API_URL}/reviews/${tareaEnEdicion.id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ 
-                        nombre: nuevoNombre, 
-                        descripcion: nuevaDescripcion 
-                    })
-                });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    cerrarModal();
-                    mostrarNotificacion('✅ Reseña actualizada');
-                    await cargarTareas();
-                }
-            } catch (error) {
-                console.error('Error al editar tarea:', error);
-                mostrarNotificacion('❌ Error al actualizar', 'error');
-            }
+            gestor.editarTarea(tareaEnEdicion.id, nuevoNombre, nuevaDescripcion);
+            cerrarModal();
+            mostrarNotificacion('✅ Tarea actualizada');
+            renderizarTareas();
         }
 
-        async function actualizarEstadisticas() {
-            try {
-                const response = await fetch(`${API_URL}/reviews/stats/summary`);
-                const result = await response.json();
-                
-                if (result.success) {
-                    const stats = result.data;
-                    document.getElementById('totalTasks').textContent = stats.total || 0;
-                    document.getElementById('completedTasks').textContent = stats.completadas || 0;
-                    document.getElementById('pendingTasks').textContent = stats.pendientes || 0;
-                }
-            } catch (error) {
-                console.error('Error al cargar estadísticas:', error);
-            }
+        function actualizarEstadisticas() {
+            const stats = gestor.obtenerEstadisticas();
+            document.getElementById('totalTasks').textContent = stats.total;
+            document.getElementById('completedTasks').textContent = stats.completadas;
+            document.getElementById('pendingTasks').textContent = stats.pendientes;
         }
 
-        function mostrarNotificacion(mensaje, tipo = 'success') {
+        function mostrarNotificacion(mensaje) {
             const notif = document.createElement('div');
-            const bgColor = tipo === 'success' ? '#10b981' : '#ef4444';
-            notif.style.cssText = `
-                position: fixed; 
-                top: 20px; 
-                right: 20px; 
-                background: ${bgColor}; 
-                color: white; 
-                padding: 1rem 2rem; 
-                border-radius: 8px; 
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
-                z-index: 2000;
-                animation: slideIn 0.3s ease;
-            `;
+            notif.style.cssText = `position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 1rem 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 2000;`;
             notif.textContent = mensaje;
             document.body.appendChild(notif);
-            setTimeout(() => {
-                notif.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => document.body.removeChild(notif), 300);
-            }, 3000);
+            setTimeout(() => document.body.removeChild(notif), 3000);
         }
 
-        // Inicialización
-        document.addEventListener('DOMContentLoaded', async () => {
-            await testConnection();
-            await cargarTareas();
-            
-            // Verificar conexión cada 30 segundos
-            setInterval(testConnection, 30000);
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarTareas();
+            actualizarEstadisticas();
         });
     </script>
 </body>
